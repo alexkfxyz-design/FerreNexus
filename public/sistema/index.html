@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FerroNexus — Sistema para ferreterías | NexusCode Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f2ee; --paper:#ffffff; --ink:#1b1d1f; --steel:#22272d; --steel2:#2e353d;
+  --muted:#6b6f75; --line:#e3dfd7; --orange:#f26b1d; --orange-d:#d8560c; --yellow:#ffc21a;
+  --ok:#1f9d55; --ok-bg:#e6f5ec; --bad:#d63b2f; --bad-bg:#fbe9e7; --warn-bg:#fff4d6;
+  --r:10px; --shadow:0 1px 2px rgba(0,0,0,.05),0 6px 20px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.cond{font-family:"Barlow Condensed",Inter,sans-serif;letter-spacing:.2px}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font:inherit;color:inherit}
+.hidden{display:none!important}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:8px;font-weight:600;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--orange);color:#fff}
+.btn-primary:hover{background:var(--orange-d)}
+.btn-ghost{border:1.5px solid currentColor}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-light{background:#fff;border:1px solid var(--line)}
+.btn-light:hover{border-color:#cfc9bd}
+.btn-sm{padding:7px 12px;font-size:13px}
+.hazard{height:8px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 14px,var(--steel) 14px 28px)}
+
+/* ============ LANDING ============ */
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.nav{position:sticky;top:0;z-index:30;background:rgba(34,39,45,.97);backdrop-filter:blur(6px);color:#fff}
+.nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-family:"Barlow Condensed";font-weight:800;font-size:24px;letter-spacing:.5px}
+.logo-mark{width:32px;height:32px;border-radius:7px;background:var(--orange);display:grid;place-items:center}
+.logo small{display:block;font-family:Inter;font-weight:500;font-size:10px;letter-spacing:1.5px;color:#aab2bb;margin-top:-4px;text-transform:uppercase}
+.nav-links{display:flex;gap:22px;margin-left:auto;font-size:14px;color:#cfd5db}
+.nav-links button:hover{color:#fff}
+.hero{background:var(--steel);color:#fff;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 400px at 85% 10%,rgba(242,107,29,.22),transparent 60%),linear-gradient(transparent 0 0);pointer-events:none}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding-top:72px;padding-bottom:80px;position:relative}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--yellow)}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--yellow)}
+.hero h1{font-size:62px;line-height:.98;font-weight:800;margin:18px 0 18px;text-transform:uppercase}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p.lead{font-size:18px;color:#c9d0d7;max-width:520px}
+.hero-ctas{display:flex;gap:12px;margin:30px 0 30px;flex-wrap:wrap}
+.hero-facts{display:flex;gap:26px;flex-wrap:wrap;font-size:13px;color:#aab2bb}
+.hero-facts span{display:flex;align-items:center;gap:7px}
+.hero-facts i{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}
+.mock{background:#fff;border-radius:14px;box-shadow:0 30px 70px rgba(0,0,0,.45);color:var(--ink);overflow:hidden;transform:perspective(1400px) rotateY(-6deg) rotateX(2deg)}
+.mock-top{display:flex;gap:6px;padding:10px 14px;background:#eceae5}
+.mock-top i{width:10px;height:10px;border-radius:50%;background:#d4d0c8}
+.mock-body{display:grid;grid-template-columns:120px 1fr;min-height:330px}
+.mock-side{background:var(--steel);padding:14px 10px;display:flex;flex-direction:column;gap:7px}
+.mock-side b{height:9px;border-radius:4px;background:#3d4550}
+.mock-side b.on{background:var(--orange)}
+.mock-main{padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.mock-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mock-kpi{background:#fff;border-radius:8px;padding:10px;border:1px solid var(--line)}
+.mock-kpi small{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.mock-kpi div{font-family:"Barlow Condensed";font-weight:700;font-size:22px}
+.mock-chart{background:#fff;border-radius:8px;border:1px solid var(--line);padding:12px;display:flex;align-items:flex-end;gap:8px;height:130px}
+.mock-chart span{flex:1;background:#f7c7a6;border-radius:3px 3px 0 0}
+.mock-chart span:last-child{background:var(--orange)}
+.mock-rows{background:#fff;border-radius:8px;border:1px solid var(--line);padding:8px 12px}
+.mock-rows div{display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid #f0ede7}
+.mock-rows div:last-child{border:0}
+.pill{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:600}
+.pill.bad{background:var(--bad-bg);color:var(--bad)} .pill.ok{background:var(--ok-bg);color:var(--ok)}
+
+section.block{padding:84px 0}
+.sec-head{max-width:640px;margin-bottom:40px}
+.sec-head h2{font-size:42px;line-height:1.05;text-transform:uppercase;font-weight:800;margin-top:10px}
+.sec-head p{color:var(--muted);margin-top:12px;font-size:16px}
+.eyebrow.dark{color:var(--orange-d)} .eyebrow.dark::before{background:var(--orange)}
+.pains{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pain{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.pain .x{font-family:"Barlow Condensed";font-weight:800;font-size:15px;color:var(--bad);letter-spacing:1px;text-transform:uppercase}
+.pain h3{font-size:22px;margin:6px 0 8px}
+.pain p{color:var(--muted);font-size:14px}
+.pain .fix{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);font-size:14px;color:var(--ok);font-weight:600}
+.modules{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.module{background:var(--paper);padding:28px}
+.module .ic{width:44px;height:44px;border-radius:10px;background:#fdeee4;color:var(--orange-d);display:grid;place-items:center;margin-bottom:16px}
+.module h3{font-size:22px;margin-bottom:6px}
+.module p{color:var(--muted);font-size:14px}
+.module .tag{display:inline-block;margin-top:12px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--ok-bg);color:var(--ok)}
+.module .tag.soon{background:#eef0f2;color:var(--muted)}
+.dark-band{background:var(--steel);color:#fff}
+.dark-band .sec-head p{color:#b8c0c8}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;counter-reset:s}
+.step{border-top:3px solid var(--orange);padding-top:20px}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:"Barlow Condensed";font-weight:800;font-size:46px;color:var(--yellow);line-height:1}
+.step h3{font-size:24px;margin:8px 0 6px}
+.step p{color:#b8c0c8;font-size:14px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+.plan{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:28px;display:flex;flex-direction:column}
+.plan.featured{border:2px solid var(--orange);box-shadow:var(--shadow);position:relative}
+.plan.featured::after{content:"Más elegido";position:absolute;top:-12px;left:28px;background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase}
+.plan h3{font-size:26px;text-transform:uppercase}
+.plan .who{color:var(--muted);font-size:14px;min-height:42px}
+.price{font-family:"Barlow Condensed";font-weight:800;font-size:46px;margin:14px 0 4px}
+.price small{font-family:Inter;font-size:14px;font-weight:500;color:var(--muted)}
+.plan ul{list-style:none;margin:18px 0 24px;display:flex;flex-direction:column;gap:9px;font-size:14px;flex:1}
+.plan li{display:flex;gap:9px}
+.plan li::before{content:"";flex:none;width:16px;height:16px;margin-top:2px;border-radius:50%;background:var(--ok-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%231f9d55' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px}
+.note{font-size:12px;color:var(--muted);margin-top:18px}
+.faq{max-width:780px}
+.faq details{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px}
+.faq summary{padding:18px 20px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+.faq summary::after{content:"+";font-size:20px;color:var(--orange);line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 20px 18px;color:var(--muted);font-size:14px}
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.form{background:#fff;color:var(--ink);border-radius:14px;padding:28px;display:grid;gap:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(242,107,29,.15)}
+footer{background:#16191d;color:#8d969f;font-size:13px;padding:28px 0}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+/* ============ APP ============ */
+#app{min-height:100vh}
+.login{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.login-art{background:var(--steel);color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.login-art h2{font-size:52px;line-height:1;text-transform:uppercase;font-weight:800;max-width:420px}
+.login-art h2 em{font-style:normal;color:var(--orange)}
+.login-form{display:grid;place-items:center;padding:32px}
+.login-card{width:100%;max-width:380px;display:grid;gap:16px}
+.login-card h3{font-size:32px;text-transform:uppercase}
+.demo-cred{background:var(--warn-bg);border:1px solid #f3dc9a;border-radius:8px;padding:10px 12px;font-size:13px}
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.side{background:var(--steel);color:#cfd5db;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.side .logo{color:#fff;padding:18px 18px 22px}
+.side nav{display:flex;flex-direction:column;gap:2px;padding:0 10px}
+.side nav button{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;font-size:14px;font-weight:500;text-align:left}
+.side nav button:hover{background:var(--steel2);color:#fff}
+.side nav button.on{background:var(--orange);color:#fff}
+.side nav button .badge{margin-left:auto;background:var(--bad);color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:0 7px}
+.side .side-foot{margin-top:auto;padding:16px;border-top:1px solid #353c45;font-size:12px}
+.side .user{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--yellow);color:var(--ink);display:grid;place-items:center;font-weight:700}
+.main{min-width:0}
+.topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.topbar h1{font-size:28px;text-transform:uppercase;font-weight:800}
+.topbar .demo-tag{font-size:11px;font-weight:700;background:var(--warn-bg);color:#8a6200;border:1px solid #f3dc9a;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px}
+.topbar .right{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.content{padding:24px 28px 48px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.card-h h3{font-size:19px;text-transform:uppercase}
+.card-b{padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.kpi{padding:18px}
+.kpi small{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.7px}
+.kpi .v{font-family:"Barlow Condensed";font-weight:800;font-size:36px;line-height:1.1;margin-top:4px}
+.kpi .d{font-size:12px;color:var(--muted)}
+.kpi.alert .v{color:var(--bad)}
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line);background:#faf9f6;position:sticky;top:0}
+.tbl td{padding:11px 14px;border-bottom:1px solid #f0ede7;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover td{background:#fcfbf8}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.mono{font-family:"JetBrains Mono",monospace;font-size:12.5px}
+.sku{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--muted)}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;background:#eef0f2;color:#4a5058}
+.chip.ok{background:var(--ok-bg);color:var(--ok)} .chip.bad{background:var(--bad-bg);color:var(--bad)} .chip.warn{background:var(--warn-bg);color:#8a6200}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:200px;position:relative}
+.search input{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--line);border-radius:8px;background:#fff;outline:none}
+.search input:focus{border-color:var(--orange)}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.sel{padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.hbar{display:grid;grid-template-columns:110px 1fr 90px;gap:10px;align-items:center;font-size:13px;margin-bottom:10px}
+.hbar .t{height:10px;background:#f1eee8;border-radius:5px;overflow:hidden}
+.hbar .t i{display:block;height:100%;background:var(--orange);border-radius:5px}
+.list-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0ede7;font-size:14px}
+.list-row:last-child{border:0}
+
+/* POS */
+.pos{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chips button{padding:6px 13px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:500}
+.chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:6px;transition:.12s;min-height:138px}
+.pcard:hover{border-color:var(--orange);box-shadow:0 4px 14px rgba(242,107,29,.12)}
+.pcard:disabled{opacity:.45;cursor:not-allowed}
+.pcard .cat{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;font-family:"Barlow Condensed";font-weight:800;font-size:13px}
+.pcard .n{font-size:13px;font-weight:600;line-height:1.3;flex:1}
+.pcard .p{display:flex;justify-content:space-between;align-items:baseline}
+.pcard .p b{font-family:"Barlow Condensed";font-size:20px}
+.pcard .p small{font-size:11px;color:var(--muted)}
+.cart{position:sticky;top:90px}
+.cart-items{max-height:300px;overflow:auto}
+.ci{display:grid;grid-template-columns:1fr auto;gap:6px;padding:10px 18px;border-bottom:1px solid #f0ede7}
+.ci .n{font-size:13px;font-weight:600}
+.ci .s{font-size:12px;color:var(--muted)}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.qty button{width:28px;height:28px;font-weight:700;color:var(--muted)}
+.qty button:hover{background:#f4f2ee;color:var(--ink)}
+.qty span{min-width:30px;text-align:center;font-size:13px;font-weight:600}
+.ci .lt{font-weight:700;text-align:right;font-size:14px}
+.ci .rm{font-size:12px;color:var(--bad);text-align:right}
+.empty{padding:32px 18px;text-align:center;color:var(--muted);font-size:14px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg.four{grid-template-columns:repeat(4,1fr)}
+.seg button{padding:8px 4px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--ink);color:#fff}
+.totals{padding:14px 18px;background:#faf9f6;border-top:1px solid var(--line)}
+.totals div{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px;color:var(--muted)}
+.totals .grand{font-family:"Barlow Condensed";font-weight:800;font-size:32px;color:var(--ink);margin:6px 0 0}
+.cobrar{width:100%;justify-content:center;font-size:16px;padding:14px;margin-top:12px}
+.cobrar:disabled{background:#c9c4ba;cursor:not-allowed}
+
+/* modal & toast */
+.overlay{position:fixed;inset:0;background:rgba(22,25,29,.55);display:grid;place-items:center;z-index:100;padding:20px}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:520px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.modal .card-h{position:sticky;top:0;background:#fff}
+.modal .foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 18px;border-top:1px solid var(--line)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid .full{grid-column:1/-1}
+.ticket{font-family:"JetBrains Mono",monospace;font-size:12px;background:#fffef9;border:1px dashed #cfc9bd;padding:18px;margin:4px 0;line-height:1.55}
+.ticket .c{text-align:center}
+.ticket hr{border:0;border-top:1px dashed #bdb6a8;margin:8px 0}
+.ticket .r{display:flex;justify-content:space-between;gap:10px}
+.ticket .big{font-size:15px;font-weight:600}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;z-index:200;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center}
+.toast.err{background:var(--bad)}
+.x-close{font-size:22px;line-height:1;color:var(--muted);padding:2px 6px}
+
+@media (max-width:1000px){
+  .hero .wrap,.contact{grid-template-columns:1fr}
+  .mock{transform:none}
+  .pains,.modules,.steps,.plans{grid-template-columns:1fr 1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  .grid2,.pos{grid-template-columns:1fr}
+  .cart{position:static}
+  .shell{grid-template-columns:1fr}
+  .side{position:sticky;top:0;height:auto;z-index:20;flex-direction:row;align-items:center;overflow-x:auto}
+  .side .logo{padding:10px 14px}
+  .side .logo small{display:none}
+  .side nav{flex-direction:row;padding:6px}
+  .side nav button{white-space:nowrap;padding:8px 10px}
+  .side .side-foot{display:none}
+  .topbar{position:static}
+  .login{grid-template-columns:1fr}
+  .login-art{min-height:260px}
+}
+@media (max-width:640px){
+  .nav-links{display:none}
+  .hero h1{font-size:44px}
+  .sec-head h2{font-size:32px}
+  .pains,.modules,.steps,.plans,.fgrid{grid-template-columns:1fr}
+  .content,.topbar{padding-left:16px;padding-right:16px}
+  .tbl .hide-sm{display:none}
+  .hbar{grid-template-columns:90px 1fr 76px}
+  .side nav button span.lbl{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== LANDING ===================== -->
+<div id="landing">
+  <header class="nav">
+    <div class="wrap">
+      <div class="logo">
+        <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div>
+        <div>FERRONEXUS<small>by NexusCode Systems</small></div>
+      </div>
+      <nav class="nav-links">
+        <button data-scroll="modulos">Módulos</button>
+        <button data-scroll="como">Implementación</button>
+        <button data-scroll="planes">Planes</button>
+        <button data-scroll="faq">Preguntas</button>
+      </nav>
+      <button class="btn btn-primary btn-sm" data-go="demo">Probar demo</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Software para ferreterías</span>
+        <h1>Tu ferretería, <em>bajo control</em> del mostrador al almacén</h1>
+        <p class="lead">Ventas rápidas, inventario al día y comprobantes en segundos. FerroNexus está pensado para ferreterías y distribuidoras de materiales de construcción en el Perú.</p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" data-go="demo">Probar demo en vivo →</button>
+          <button class="btn btn-ghost" data-scroll="planes">Ver planes</button>
+        </div>
+        <div class="hero-facts">
+          <span><i></i>PC, tablet y celular</span>
+          <span><i></i>Precios en soles con IGV</span>
+          <span><i></i>Soporte en español</span>
+        </div>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="mock-top"><i></i><i></i><i></i></div>
+        <div class="mock-body">
+          <div class="mock-side"><b class="on"></b><b></b><b></b><b></b><b></b></div>
+          <div class="mock-main">
+            <div class="mock-kpis">
+              <div class="mock-kpi"><small>Ventas hoy</small><div>S/ 2,840</div></div>
+              <div class="mock-kpi"><small>Tickets</small><div>37</div></div>
+              <div class="mock-kpi"><small>Stock bajo</small><div style="color:var(--bad)">5</div></div>
+            </div>
+            <div class="mock-chart"><span style="height:45%"></span><span style="height:62%"></span><span style="height:38%"></span><span style="height:71%"></span><span style="height:55%"></span><span style="height:80%"></span><span style="height:92%"></span></div>
+            <div class="mock-rows">
+              <div><span>Cemento Portland Tipo I 42.5 kg</span><span class="pill ok">120 bolsas</span></div>
+              <div><span>Cinta aislante 20 m</span><span class="pill bad">Stock bajo</span></div>
+              <div><span>Fierro corrugado 1/2" x 9 m</span><span class="pill ok">85 varillas</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hazard"></div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow dark">¿Te suena?</span>
+        <h2>Problemas de todos los días en el mostrador</h2>
+      </div>
+      <div class="pains">
+        <div class="pain"><div class="x">Problema</div><h3>"Creo que sí hay… déjame ver"</h3><p>El stock vive en un cuaderno o en la memoria del encargado. Se pierden ventas por no saber qué hay en almacén.</p><div class="fix">✓ Stock en tiempo real y alertas de reposición</div></div>
+        <div class="pain"><div class="x">Problema</div><h3>Colas en hora punta</h3><p>Buscar precios, sumar a mano y escribir la boleta hace que el maestro de obra se vaya a la competencia.</p><div class="fix">✓ Venta en 3 clics con búsqueda por nombre o código</div></div>
+        <div class="pain"><div class="x">Problema</div><h3>No sabes qué te deja ganancia</h3><p>Sin reportes, es difícil saber qué productos rotan, cuáles se quedan y cuánto se vendió en la semana.</p><div class="fix">✓ Reportes por día, categoría y producto</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="modulos" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow dark">Módulos</span>
+        <h2>Todo lo que una ferretería necesita</h2>
+        <p>Empieza con lo esencial y activa más módulos a medida que tu negocio crece.</p>
+      </div>
+      <div class="modules">
+        <div class="module"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M2 10h20M7 21h10"/></svg></div><h3>Punto de venta</h3><p>Boletas y facturas, varios métodos de pago (efectivo, Yape/Plin, tarjeta, transferencia) y cálculo de vuelto.</p><span class="tag">Incluido en la demo</span></div>
+        <div class="module"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></div><h3>Inventario</h3><p>Catálogo por categorías y unidades (bolsa, varilla, kg, metro, galón), stock mínimo y ajustes de entrada/salida.</p><span class="tag">Incluido en la demo</span></div>
+        <div class="module"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 11a3 3 0 1 0 0-6M22 21a6 6 0 0 0-4-5.6"/></svg></div><h3>Clientes</h3><p>Registro con DNI o RUC, historial de compras por cliente y datos listos para facturar a constructoras.</p><span class="tag">Incluido en la demo</span></div>
+        <div class="module"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><h3>Reportes</h3><p>Ventas por día y por categoría, productos más vendidos y tickets promedio. Exportables a Excel.</p><span class="tag">Incluido en la demo</span></div>
+        <div class="module"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><h3>Compras y proveedores</h3><p>Órdenes de compra, recepción de mercadería y costo promedio actualizado automáticamente.</p><span class="tag soon">Plan Negocio</span></div>
+        <div class="module"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div><h3>Multisede y facturación electrónica</h3><p>Varias tiendas y almacenes, roles por usuario e integración con tu proveedor de facturación electrónica.</p><span class="tag soon">Plan Empresa</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block dark-band" id="como">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Implementación</span>
+        <h2>Funcionando en tu tienda en pocos días</h2>
+        <p>Nosotros nos encargamos de la configuración. Tú sigues vendiendo.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Diagnóstico</h3><p>Conversamos sobre cómo vendes hoy, cuántas cajas tienes y qué reportes necesitas.</p></div>
+        <div class="step"><h3>Carga de catálogo</h3><p>Importamos tus productos, precios y stock desde Excel o desde tu sistema anterior.</p></div>
+        <div class="step"><h3>Capacitación</h3><p>Capacitamos a tu equipo en caja y almacén, y te acompañamos las primeras semanas.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="planes">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow dark">Planes</span>
+        <h2>Un plan para cada tamaño de ferretería</h2>
+      </div>
+      <div class="plans">
+        <div class="plan">
+          <h3>Emprendedor</h3><p class="who">Ferreterías de barrio con una sola caja.</p>
+          <div class="price">S/ 79<small> / mes</small></div>
+          <ul><li>1 caja y 2 usuarios</li><li>Punto de venta e inventario</li><li>Hasta 1,500 productos</li><li>Reportes básicos</li><li>Soporte por WhatsApp</li></ul>
+          <button class="btn btn-light" data-scroll="contacto">Solicitar</button>
+        </div>
+        <div class="plan featured">
+          <h3>Negocio</h3><p class="who">Ferreterías con varias cajas y venta a constructoras.</p>
+          <div class="price">S/ 149<small> / mes</small></div>
+          <ul><li>Hasta 3 cajas y 6 usuarios</li><li>Productos ilimitados</li><li>Clientes con RUC e historial</li><li>Compras y proveedores</li><li>Reportes avanzados y exportación a Excel</li></ul>
+          <button class="btn btn-primary" data-scroll="contacto">Solicitar</button>
+        </div>
+        <div class="plan">
+          <h3>Empresa</h3><p class="who">Distribuidoras y cadenas con varias sedes.</p>
+          <div class="price">A medida</div>
+          <ul><li>Multisede y multialmacén</li><li>Roles y permisos por usuario</li><li>Integración con facturación electrónica</li><li>Personalizaciones a pedido</li><li>Soporte prioritario</li></ul>
+          <button class="btn btn-light" data-scroll="contacto">Cotizar</button>
+        </div>
+      </div>
+      <p class="note">Precios referenciales en soles. Consulta por la implementación y el primer mes de prueba.</p>
+    </div>
+  </section>
+
+  <section class="block" id="faq" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow dark">Preguntas frecuentes</span><h2>Resolvemos tus dudas</h2></div>
+      <div class="faq">
+        <details><summary>¿Puedo importar mis productos desde Excel?</summary><p>Sí. En la implementación cargamos tu catálogo, precios y stock desde una hoja de Excel o desde el sistema que uses actualmente.</p></details>
+        <details><summary>¿Emite boletas y facturas electrónicas?</summary><p>El sistema genera boletas y facturas. Para el envío electrónico se integra con un proveedor de facturación electrónica autorizado, disponible en el plan Empresa o como adicional.</p></details>
+        <details><summary>¿Funciona en celular o tablet?</summary><p>Sí, se usa desde el navegador en PC, laptop, tablet o celular. Ideal para consultar stock desde el almacén.</p></details>
+        <details><summary>¿Qué pasa si se va el internet?</summary><p>Podemos configurar la caja para seguir registrando ventas y sincronizar cuando vuelva la conexión (según el plan contratado).</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="block dark-band" id="contacto">
+    <div class="wrap contact">
+      <div class="sec-head" style="margin:0">
+        <span class="eyebrow">Contacto</span>
+        <h2>Pide una demostración para tu ferretería</h2>
+        <p>Déjanos tus datos y te mostramos FerroNexus con productos de tu propio negocio.</p>
+        <div style="margin-top:24px"><button class="btn btn-primary" data-go="demo">O pruébalo ahora →</button></div>
+      </div>
+      <form class="form" id="leadForm">
+        <div class="fgrid">
+          <div class="field"><label>Nombre</label><input required placeholder="Tu nombre"></div>
+          <div class="field"><label>Ferretería</label><input required placeholder="Nombre del negocio"></div>
+          <div class="field"><label>WhatsApp</label><input required placeholder="9xx xxx xxx"></div>
+          <div class="field"><label>N.º de cajas</label><select><option>1</option><option>2–3</option><option>4 o más</option></select></div>
+          <div class="field full"><label>Mensaje</label><textarea rows="3" placeholder="Cuéntanos qué necesitas"></textarea></div>
+        </div>
+        <button class="btn btn-primary" type="submit" style="justify-content:center">Enviar solicitud</button>
+        <p id="leadMsg" class="note hidden" style="color:var(--ok);font-weight:600;margin:0"></p>
+      </form>
+    </div>
+  </section>
+
+  <footer><div class="wrap"><span>© 2026 NexusCode Systems · Arequipa, Perú</span><span>FerroNexus — Sistema de gestión para ferreterías</span></div></footer>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app" class="hidden">
+  <div id="login" class="login">
+    <div class="login-art">
+      <div class="logo" style="color:#fff">
+        <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div>
+        <div>FERRONEXUS<small>by NexusCode Systems</small></div>
+      </div>
+      <h2>Vende más rápido. <em>Controla</em> tu stock.</h2>
+      <div style="font-size:13px;color:#aab2bb">Demo interactiva · los datos son ficticios y se guardan solo en este navegador.</div>
+      <div class="hazard" style="position:absolute;left:0;right:0;bottom:0"></div>
+    </div>
+    <div class="login-form">
+      <form class="login-card" id="loginForm">
+        <button type="button" class="btn-sm" data-go="inicio" style="justify-self:start;color:var(--muted)">← Volver a la página</button>
+        <h3>Iniciar sesión</h3>
+        <div class="demo-cred"><b>Acceso de demostración:</b> usuario <span class="mono">demo</span> · clave <span class="mono">1234</span></div>
+        <div class="field"><label>Usuario</label><input id="lu" value="demo" autocomplete="off"></div>
+        <div class="field"><label>Contraseña</label><input id="lp" type="password" value="1234"></div>
+        <button class="btn btn-primary" style="justify-content:center" type="submit">Entrar al sistema</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="shell" class="shell hidden">
+    <aside class="side">
+      <div class="logo">
+        <div class="logo-mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div>
+        <div>FERRONEXUS<small>Ferretería El Constructor</small></div>
+      </div>
+      <nav id="sideNav"></nav>
+      <div class="side-foot">
+        <div class="user"><div class="avatar">LC</div><div><div style="color:#fff;font-weight:600">Luis Condori</div><div>Administrador</div></div></div>
+        <button class="btn-sm" id="resetBtn" style="color:#aab2bb;padding:4px 0">↺ Restablecer datos demo</button><br>
+        <button class="btn-sm" id="logoutBtn" style="color:#aab2bb;padding:4px 0">⎋ Cerrar sesión</button>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <h1 id="viewTitle">Dashboard</h1>
+        <span class="demo-tag">Demo</span>
+        <div class="right"><span id="today"></span><button class="btn btn-light btn-sm" data-go="inicio">Ver página</button></div>
+      </div>
+      <div class="content" id="view"></div>
+    </main>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+const $ = (s,el=document)=>el.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => 'S/ ' + Number(n).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt0 = n => 'S/ ' + Math.round(n).toLocaleString('es-PE');
+const dayKey = d => { const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
+const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const fdt = iso => { const d=new Date(iso); return d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'}); };
+const CAT_COLORS = {
+  'Herramientas':['#fdeee4','#c4500b'],'Construcción':['#ece9e3','#4a4338'],'Electricidad':['#fff4d6','#8a6200'],
+  'Gasfitería':['#e3f0fb','#1b5f9c'],'Pinturas':['#f6e6f2','#8b2a6f'],'Tornillería':['#e9ecef','#3f4750'],'Seguridad':['#e6f5ec','#1a7a44']
+};
+const ICON = {
+  dash:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
+  pos:'<rect x="2" y="4" width="20" height="14" rx="2"/><path d="M2 10h20M7 21h10"/>',
+  inv:'<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+  cli:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 11a3 3 0 1 0 0-6M22 21a6 6 0 0 0-4-5.6"/>',
+  ven:'<path d="M14 2H6a2 2 0 0 0-2 2v16l3-2 3 2 3-2 3 2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>'
+};
+const svg = (p,s=18)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const searchIcon = svg('<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',16);
+
+/* ---------- seed data ---------- */
+const SEED_PRODUCTS = [
+ ['HER-001','Martillo de uña 16 oz mango de fibra','Herramientas','und',28.90,18.50,24,6],
+ ['HER-002','Destornillador plano 1/4" x 6"','Herramientas','und',9.50,5.20,40,10],
+ ['HER-003','Alicate universal 8"','Herramientas','und',24.00,14.80,18,5],
+ ['HER-004','Wincha 5 m x 19 mm','Herramientas','und',16.50,9.90,30,8],
+ ['HER-005','Taladro percutor 650 W','Herramientas','und',189.00,132.00,6,3],
+ ['HER-006','Juego de llaves mixtas 12 piezas','Herramientas','jgo',79.90,52.00,4,4],
+ ['HER-007','Sierra de arco con hoja 12"','Herramientas','und',22.50,13.70,15,5],
+ ['CON-001','Cemento Portland Tipo I 42.5 kg','Construcción','bolsa',32.50,28.20,120,40],
+ ['CON-002','Fierro corrugado 1/2" x 9 m','Construcción','varilla',38.00,32.50,85,30],
+ ['CON-003','Fierro corrugado 3/8" x 9 m','Construcción','varilla',22.00,18.60,110,30],
+ ['CON-004','Alambre negro N.º 16','Construcción','kg',6.80,5.10,60,20],
+ ['CON-005','Clavos de 3"','Construcción','kg',7.50,5.40,45,15],
+ ['CON-006','Arena gruesa','Construcción','m³',65.00,48.00,14,5],
+ ['ELE-001','Cable THW 14 AWG rollo 100 m','Electricidad','rollo',145.00,112.00,9,4],
+ ['ELE-002','Interruptor simple','Electricidad','und',7.90,4.30,50,15],
+ ['ELE-003','Tomacorriente doble con tierra','Electricidad','und',11.50,6.70,38,15],
+ ['ELE-004','Foco LED 12 W luz blanca','Electricidad','und',8.90,4.90,72,20],
+ ['ELE-005','Cinta aislante 20 m','Electricidad','und',4.50,2.30,8,20],
+ ['GAS-001','Tubo PVC 1/2" x 5 m','Gasfitería','und',9.80,6.90,64,20],
+ ['GAS-002','Codo PVC 1/2" x 90°','Gasfitería','und',1.20,0.55,300,100],
+ ['GAS-003','Llave de paso 1/2"','Gasfitería','und',18.90,11.40,14,8],
+ ['GAS-004','Pegamento PVC 1/4 gal','Gasfitería','und',21.00,14.20,5,6],
+ ['GAS-005','Cinta teflón 3/4"','Gasfitería','und',2.00,0.80,120,40],
+ ['PIN-001','Pintura látex blanco 4 L','Pinturas','galón',62.00,44.00,22,8],
+ ['PIN-002','Esmalte sintético negro 1 L','Pinturas','litro',28.50,19.20,16,6],
+ ['PIN-003','Rodillo 9" con bandeja','Pinturas','und',19.90,11.00,11,5],
+ ['PIN-004','Brocha 3"','Pinturas','und',8.50,4.60,3,10],
+ ['PIN-005','Thinner acrílico 1 gal','Pinturas','galón',24.00,16.80,19,6],
+ ['TOR-001','Perno hexagonal 3/8" x 2"','Tornillería','und',0.90,0.42,400,150],
+ ['TOR-002','Tornillo autorroscante 8 x 1" (caja 100)','Tornillería','caja',12.00,7.20,26,10],
+ ['TOR-003','Tarugo plástico 1/4" (bolsa 100)','Tornillería','bolsa',6.50,3.40,33,10],
+ ['SEG-001','Guantes de nitrilo','Seguridad','par',9.90,5.10,48,15],
+ ['SEG-002','Lentes de protección claros','Seguridad','und',7.50,3.60,2,10],
+ ['SEG-003','Casco de seguridad con rachet','Seguridad','und',29.00,17.50,12,5]
+].map(([sku,nombre,cat,und,precio,costo,stock,min])=>({sku,nombre,cat,und,precio,costo,stock,min}));
+
+const SEED_CLIENTS = [
+ {id:1,tipo:'—',doc:'—',nombre:'Clientes varios',tel:''},
+ {id:2,tipo:'RUC',doc:'20600000011',nombre:'Constructora Los Andes S.A.C.',tel:'954 000 111'},
+ {id:3,tipo:'DNI',doc:'40000001',nombre:'Juan Mamani Quispe',tel:'987 000 222'},
+ {id:4,tipo:'RUC',doc:'20600000022',nombre:'Inversiones Sur Andino E.I.R.L.',tel:'959 000 333'},
+ {id:5,tipo:'DNI',doc:'40000002',nombre:'Rosa Huamán Torres',tel:'951 000 444'},
+ {id:6,tipo:'DNI',doc:'40000003',nombre:'Carlos Apaza Ccama',tel:''}
+];
+
+function rng(seed){ return ()=>{ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; }; }
+
+function seedSales(products){
+  const r = rng(20261113), sales=[]; let nb=1, nf=1;
+  const now = new Date();
+  const weights = products.map(p=> p.cat==='Construcción'?4: p.cat==='Gasfitería'||p.cat==='Electricidad'?3:2);
+  const pick = ()=>{ const tot=weights.reduce((a,b)=>a+b,0); let x=r()*tot; for(let i=0;i<products.length;i++){ x-=weights[i]; if(x<=0) return products[i]; } return products[0]; };
+  for(let d=6; d>=0; d--){
+    const n = d===0 ? 7 : 9 + Math.floor(r()*9);
+    for(let k=0;k<n;k++){
+      const dt = new Date(now); dt.setDate(now.getDate()-d);
+      const maxH = d===0 ? Math.max(9, Math.min(now.getHours(),19)) : 19;
+      dt.setHours(8+Math.floor(r()*(maxH-8+1)), Math.floor(r()*60), 0, 0);
+      if(dt>now) dt.setTime(now.getTime()-((n-k)*600000));
+      const items=[]; const ni=1+Math.floor(r()*4);
+      for(let i=0;i<ni;i++){
+        const p=pick(); if(items.find(it=>it.sku===p.sku)) continue;
+        const q = p.precio<3 ? 5+Math.floor(r()*20) : p.precio>100 ? 1 : 1+Math.floor(r()*(p.cat==='Construcción'?8:3));
+        items.push({sku:p.sku,nombre:p.nombre,und:p.und,cant:q,precio:p.precio});
+      }
+      const cl = r()<0.7 ? 1 : 2+Math.floor(r()*5);
+      const isF = (cl===2||cl===4) && r()<0.8;
+      const metodo = ['Efectivo','Efectivo','Yape/Plin','Tarjeta','Transferencia'][Math.floor(r()*5)];
+      const total = items.reduce((a,it)=>a+it.cant*it.precio,0);
+      sales.push({id:'s'+sales.length, serie:isF?'F001':'B001', num:isF?nf++:nb++, fecha:dt.toISOString(), clienteId:cl, items, total:+total.toFixed(2), metodo});
+    }
+  }
+  sales.sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  // renumber in chronological order
+  let b=1,f=1; sales.forEach(s=>{ s.num = s.serie==='F001'?f++:b++; });
+  return sales;
+}
+
+const KEY='ferronexus-demo-v1';
+let db;
+function freshDB(){ const products=JSON.parse(JSON.stringify(SEED_PRODUCTS)); return {products, clients:JSON.parse(JSON.stringify(SEED_CLIENTS)), sales:seedSales(products), nextClient:7}; }
+function load(){ try{ const s=localStorage.getItem(KEY); if(s){ db=JSON.parse(s); return; } }catch(e){} db=freshDB(); }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){} }
+load();
+
+/* ---------- UI state ---------- */
+const state = { view:'dashboard', posCat:'Todas', posQ:'', cart:[], comp:'B', clienteId:1, metodo:'Efectivo', recibido:'', invQ:'', invCat:'Todas', invLow:false, cliQ:'', venQ:'' };
+const VIEWS = [
+  {id:'dashboard',label:'Dashboard',icon:'dash'},
+  {id:'pos',label:'Punto de venta',icon:'pos'},
+  {id:'inventario',label:'Inventario',icon:'inv'},
+  {id:'clientes',label:'Clientes',icon:'cli'},
+  {id:'ventas',label:'Ventas',icon:'ven'}
+];
+const cats = ()=>[...new Set(db.products.map(p=>p.cat))];
+const lowStock = ()=>db.products.filter(p=>p.stock<=p.min);
+const client = id => db.clients.find(c=>c.id===id) || db.clients[0];
+const prod = sku => db.products.find(p=>p.sku===sku);
+
+/* ---------- toast & modal ---------- */
+let toastT;
+function toast(msg, err){ const r=$('#toastRoot'); r.innerHTML=`<div class="toast ${err?'err':''}">${esc(msg)}</div>`; clearTimeout(toastT); toastT=setTimeout(()=>r.innerHTML='',2600); }
+function openModal(title, body, foot){
+  $('#modalRoot').innerHTML = `<div class="overlay" id="ov"><div class="modal" role="dialog" aria-modal="true"><div class="card-h"><h3>${title}</h3><button class="x-close" data-close aria-label="Cerrar">×</button></div><div class="card-b">${body}</div>${foot?`<div class="foot">${foot}</div>`:''}</div></div>`;
+  $('#ov').addEventListener('click',e=>{ if(e.target.id==='ov'||e.target.closest('[data-close]')) closeModal(); });
+}
+function closeModal(){ $('#modalRoot').innerHTML=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+/* ---------- routing ---------- */
+let logged=false; try{ logged = sessionStorage.getItem('fn-logged')==='1'; }catch(e){}
+function route(){
+  const h = (location.hash||'').replace('#','');
+  if(h==='demo'){
+    $('#landing').classList.add('hidden'); $('#app').classList.remove('hidden');
+    $('#login').classList.toggle('hidden', logged); $('#shell').classList.toggle('hidden', !logged);
+    if(logged) render();
+    window.scrollTo(0,0);
+  } else {
+    $('#app').classList.add('hidden'); $('#landing').classList.remove('hidden');
+    if(h && document.getElementById(h)) document.getElementById(h).scrollIntoView();
+  }
+}
+window.addEventListener('hashchange',route);
+document.addEventListener('click',e=>{
+  const go=e.target.closest('[data-go]'); if(go){ const t=go.dataset.go; if(t==='inicio'){ location.hash=''; history.replaceState(null,'',location.pathname+location.search); route(); window.scrollTo(0,0);} else location.hash=t; return; }
+  const sc=e.target.closest('[data-scroll]'); if(sc){ const el=document.getElementById(sc.dataset.scroll); if(el) el.scrollIntoView({behavior:'smooth'}); }
+});
+$('#leadForm').addEventListener('submit',e=>{ e.preventDefault(); const m=$('#leadMsg'); m.textContent='¡Gracias! Solicitud registrada. (En esta demo el formulario no envía datos.)'; m.classList.remove('hidden'); e.target.reset(); });
+$('#loginForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  if($('#lu').value.trim()==='demo' && $('#lp').value==='1234'){ logged=true; try{sessionStorage.setItem('fn-logged','1')}catch(e){} route(); }
+  else toast('Usuario o clave incorrectos. Usa demo / 1234', true);
+});
+$('#logoutBtn').addEventListener('click',()=>{ logged=false; try{sessionStorage.removeItem('fn-logged')}catch(e){} route(); });
+$('#resetBtn').addEventListener('click',()=>{
+  openModal('Restablecer demo','<p>Se borrarán las ventas, productos y clientes que agregaste, y se volverá a los datos de ejemplo.</p>',
+   '<button class="btn btn-light" data-close>Cancelar</button><button class="btn btn-primary" id="doReset">Restablecer</button>');
+  $('#doReset').onclick=()=>{ db=freshDB(); save(); state.cart=[]; closeModal(); render(); toast('Datos de demo restablecidos'); };
+});
+$('#today').textContent = new Date().toLocaleDateString('es-PE',{weekday:'long',day:'numeric',month:'long'});
+
+/* ---------- render ---------- */
+function render(){
+  const low = lowStock().length;
+  $('#sideNav').innerHTML = VIEWS.map(v=>`<button class="${state.view===v.id?'on':''}" data-view="${v.id}">${svg(ICON[v.icon])}<span class="lbl">${v.label}</span>${v.id==='inventario'&&low?`<span class="badge">${low}</span>`:''}</button>`).join('');
+  $('#viewTitle').textContent = VIEWS.find(v=>v.id===state.view).label;
+  ({dashboard:renderDash,pos:renderPOS,inventario:renderInv,clientes:renderCli,ventas:renderVen})[state.view]();
+}
+$('#sideNav').addEventListener('click',e=>{ const b=e.target.closest('[data-view]'); if(b){ state.view=b.dataset.view; render(); window.scrollTo(0,0);} });
+
+/* ----- Dashboard ----- */
+function renderDash(){
+  const today=dayKey(new Date());
+  const yest=new Date(); yest.setDate(yest.getDate()-1); const yk=dayKey(yest);
+  const sToday=db.sales.filter(s=>dayKey(s.fecha)===today), sY=db.sales.filter(s=>dayKey(s.fecha)===yk);
+  const tToday=sToday.reduce((a,s)=>a+s.total,0), tY=sY.reduce((a,s)=>a+s.total,0);
+  const days=[]; for(let d=6;d>=0;d--){ const x=new Date(); x.setDate(x.getDate()-d); const k=dayKey(x); days.push({k,lbl:DIAS[x.getDay()]+' '+x.getDate(),v:db.sales.filter(s=>dayKey(s.fecha)===k).reduce((a,s)=>a+s.total,0)}); }
+  const week=days.reduce((a,d)=>a+d.v,0), wTickets=db.sales.filter(s=>days.some(d=>d.k===dayKey(s.fecha))).length;
+  // margin this week
+  let cost=0; db.sales.filter(s=>days.some(d=>d.k===dayKey(s.fecha))).forEach(s=>s.items.forEach(it=>{const p=prod(it.sku); cost+=(p?p.costo:it.precio*.7)*it.cant;}));
+  const byCat={}; const byProd={};
+  db.sales.forEach(s=>s.items.forEach(it=>{ const p=prod(it.sku); const c=p?p.cat:'Otros'; byCat[c]=(byCat[c]||0)+it.cant*it.precio; byProd[it.sku]=byProd[it.sku]||{n:it.nombre,q:0,v:0,u:it.und}; byProd[it.sku].q+=it.cant; byProd[it.sku].v+=it.cant*it.precio; }));
+  const catArr=Object.entries(byCat).sort((a,b)=>b[1]-a[1]); const catMax=catArr[0]?catArr[0][1]:1;
+  const top=Object.values(byProd).sort((a,b)=>b.v-a.v).slice(0,5);
+  const low=lowStock();
+  const diff = tY ? ((tToday-tY)/tY*100) : 0;
+
+  // bar chart svg
+  const W=640,H=240,pl=48,pb=30,pt=16, max=Math.max(...days.map(d=>d.v))*1.15||1;
+  const step=(W-pl-10)/days.length, bw=step*0.56;
+  const ticks=4; let grid='';
+  for(let i=0;i<=ticks;i++){ const v=max/ticks*i, y=H-pb-(H-pb-pt)*(i/ticks); grid+=`<line x1="${pl}" x2="${W-6}" y1="${y}" y2="${y}" stroke="#eeeae3"/><text x="${pl-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#8a8e94">${v>=1000?(v/1000).toFixed(1)+'k':Math.round(v)}</text>`; }
+  const bars=days.map((d,i)=>{ const h=(H-pb-pt)*(d.v/max), x=pl+step*i+(step-bw)/2, y=H-pb-h; const last=i===days.length-1;
+    return `<g><title>${d.lbl}: ${fmt(d.v)}</title><rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="${last?'#f26b1d':'#f7c7a6'}"/><text x="${x+bw/2}" y="${y-6}" text-anchor="middle" font-size="11" font-weight="600" fill="#1b1d1f">${fmt0(d.v).replace('S/ ','')}</text><text x="${x+bw/2}" y="${H-10}" text-anchor="middle" font-size="11" fill="${last?'#1b1d1f':'#8a8e94'}" font-weight="${last?700:400}">${last?'Hoy':d.lbl}</text></g>`; }).join('');
+
+  $('#view').innerHTML = `
+  <div class="kpis">
+    <div class="card kpi"><small>Ventas de hoy</small><div class="v">${fmt(tToday)}</div><div class="d" style="color:${diff>=0?'var(--ok)':'var(--bad)'}">${tY?(diff>=0?'▲ ':'▼ ')+Math.abs(diff).toFixed(0)+'% vs. ayer':'—'}</div></div>
+    <div class="card kpi"><small>Comprobantes hoy</small><div class="v">${sToday.length}</div><div class="d">Ticket promedio ${fmt(sToday.length?tToday/sToday.length:0)}</div></div>
+    <div class="card kpi"><small>Ventas últimos 7 días</small><div class="v">${fmt0(week)}</div><div class="d">${wTickets} comprobantes · margen bruto ${week?Math.round((week-cost)/week*100):0}%</div></div>
+    <div class="card kpi ${low.length?'alert':''}"><small>Productos con stock bajo</small><div class="v">${low.length}</div><div class="d">de ${db.products.length} productos activos</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><div class="card-h"><h3>Ventas por día</h3><span class="chip">Últimos 7 días · S/</span></div><div class="card-b"><svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Ventas por día">${grid}${bars}</svg></div></div>
+    <div class="card"><div class="card-h"><h3>Por categoría</h3><span class="chip">S/ acumulado</span></div><div class="card-b">
+      ${catArr.map(([c,v])=>`<div class="hbar"><span>${esc(c)}</span><div class="t"><i style="width:${(v/catMax*100).toFixed(1)}%"></i></div><span class="num" style="text-align:right;font-weight:600">${fmt0(v)}</span></div>`).join('')}
+    </div></div>
+  </div>
+  <div class="grid2" style="grid-template-columns:1fr 1fr">
+    <div class="card"><div class="card-h"><h3>Más vendidos</h3><span class="chip">7 días</span></div><div class="card-b">
+      ${top.map((p,i)=>`<div class="list-row"><span><b class="cond" style="color:var(--orange);font-size:17px;margin-right:8px">${i+1}</b>${esc(p.n)}</span><span style="text-align:right;white-space:nowrap"><b>${fmt(p.v)}</b><br><small style="color:var(--muted)">${p.q} ${esc(p.u)}</small></span></div>`).join('')}
+    </div></div>
+    <div class="card"><div class="card-h"><h3>Alertas de stock</h3><button class="btn btn-light btn-sm" data-goview="inventario" data-low="1">Ver inventario</button></div><div class="card-b">
+      ${low.length? low.map(p=>`<div class="list-row"><span>${esc(p.nombre)}<br><span class="sku">${p.sku}</span></span><span style="text-align:right"><span class="chip bad">${p.stock} ${esc(p.und)}</span><br><small style="color:var(--muted)">mín. ${p.min}</small></span></div>`).join('') : '<div class="empty">Todo el stock está sobre el mínimo 👍</div>'}
+    </div></div>
+  </div>`;
+  $('#view').querySelectorAll('[data-goview]').forEach(b=>b.onclick=()=>{ state.view=b.dataset.goview; if(b.dataset.low) state.invLow=true; render(); });
+}
+
+/* ----- POS ----- */
+function renderPOS(){
+  const q=state.posQ.toLowerCase();
+  const list=db.products.filter(p=>(state.posCat==='Todas'||p.cat===state.posCat)&&(!q||p.nombre.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q)));
+  const clientsOpts=db.clients.map(c=>`<option value="${c.id}" ${c.id===state.clienteId?'selected':''}>${esc(c.nombre)}${c.tipo!=='—'?' · '+c.tipo+' '+c.doc:''}</option>`).join('');
+  $('#view').innerHTML = `
+  <div class="pos">
+    <div>
+      <div class="toolbar"><div class="search">${searchIcon}<input id="posQ" placeholder="Buscar por nombre o código (ej. cemento, GAS-001)" value="${esc(state.posQ)}"></div></div>
+      <div class="chips" id="posCats">${['Todas',...cats()].map(c=>`<button class="${state.posCat===c?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+      <div class="pgrid" id="pgrid"></div>
+    </div>
+    <div class="card cart">
+      <div class="card-h"><h3>Venta actual</h3>${state.cart.length?'<button class="btn-sm" id="clearCart" style="color:var(--bad)">Vaciar</button>':''}</div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="card-b" style="display:grid;gap:12px;border-top:1px solid var(--line)">
+        <div class="seg" id="compSeg"><button data-v="B" class="${state.comp==='B'?'on':''}">Boleta</button><button data-v="F" class="${state.comp==='F'?'on':''}">Factura</button></div>
+        <div class="field"><label>Cliente</label><div style="display:flex;gap:6px"><select class="sel" id="posCli" style="flex:1;min-width:0">${clientsOpts}</select><button class="btn btn-light btn-sm" id="newCliPos" title="Nuevo cliente">+</button></div></div>
+        <div class="field"><label>Método de pago</label><div class="seg four" id="metSeg">${['Efectivo','Yape/Plin','Tarjeta','Transferencia'].map(m=>`<button data-v="${m}" class="${state.metodo===m?'on':''}">${m==='Transferencia'?'Transf.':m}</button>`).join('')}</div></div>
+        <div id="cashBox"></div>
+      </div>
+      <div class="totals" id="totals"></div>
+    </div>
+  </div>`;
+  drawGrid(list); drawCart();
+  const qi=$('#posQ'); qi.oninput=()=>{ state.posQ=qi.value; const q=qi.value.toLowerCase(); drawGrid(db.products.filter(p=>(state.posCat==='Todas'||p.cat===state.posCat)&&(!q||p.nombre.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q)))); };
+  qi.onkeydown=e=>{ if(e.key==='Enter'){ const f=$('#pgrid .pcard:not([disabled])'); if(f) f.click(); } };
+  $('#posCats').onclick=e=>{ const b=e.target.closest('[data-c]'); if(b){ state.posCat=b.dataset.c; renderPOS(); } };
+  $('#compSeg').onclick=e=>{ const b=e.target.closest('[data-v]'); if(b){ state.comp=b.dataset.v; renderPOS(); } };
+  $('#metSeg').onclick=e=>{ const b=e.target.closest('[data-v]'); if(b){ state.metodo=b.dataset.v; renderPOS(); } };
+  $('#posCli').onchange=e=>{ state.clienteId=+e.target.value; };
+  $('#newCliPos').onclick=()=>clientForm(c=>{ state.clienteId=c.id; if(c.tipo==='RUC') state.comp='F'; renderPOS(); });
+  const cc=$('#clearCart'); if(cc) cc.onclick=()=>{ state.cart=[]; renderPOS(); };
+}
+function drawGrid(list){
+  $('#pgrid').innerHTML = list.length ? list.map(p=>{ const [bg,fg]=CAT_COLORS[p.cat]||['#eee','#333']; const inCart=(state.cart.find(c=>c.sku===p.sku)||{}).cant||0; const avail=p.stock-inCart;
+    return `<button class="pcard" data-sku="${p.sku}" ${avail<=0?'disabled':''}><div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="cat" style="background:${bg};color:${fg}">${p.sku.slice(0,3)}</div>${p.stock<=p.min?'<span class="chip bad">Bajo</span>':''}</div><div class="n">${esc(p.nombre)}</div><div class="p"><b>${fmt(p.precio)}</b><small>${avail} ${esc(p.und)}</small></div></button>`; }).join('')
+    : '<div class="empty" style="grid-column:1/-1">No se encontraron productos.</div>';
+  $('#pgrid').onclick=e=>{ const b=e.target.closest('[data-sku]'); if(b&&!b.disabled) addToCart(b.dataset.sku); };
+}
+function addToCart(sku){
+  const p=prod(sku); const it=state.cart.find(c=>c.sku===sku);
+  if((it?it.cant:0)+1>p.stock){ toast('Stock insuficiente de '+p.nombre, true); return; }
+  if(it) it.cant++; else state.cart.push({sku,cant:1});
+  drawCart(); const q=state.posQ.toLowerCase(); drawGrid(db.products.filter(p=>(state.posCat==='Todas'||p.cat===state.posCat)&&(!q||p.nombre.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q))));
+  if(!$('#clearCart')) renderPOS();
+}
+function cartTotal(){ return state.cart.reduce((a,c)=>a+prod(c.sku).precio*c.cant,0); }
+function drawCart(){
+  const box=$('#cartItems');
+  box.innerHTML = state.cart.length ? state.cart.map(c=>{ const p=prod(c.sku); return `<div class="ci"><div><div class="n">${esc(p.nombre)}</div><div class="s">${fmt(p.precio)} / ${esc(p.und)}</div></div><div class="lt">${fmt(p.precio*c.cant)}</div><div class="qty"><button data-a="-" data-s="${c.sku}" aria-label="Menos">−</button><span>${c.cant}</span><button data-a="+" data-s="${c.sku}" aria-label="Más">+</button></div><button class="rm" data-a="x" data-s="${c.sku}">Quitar</button></div>`; }).join('')
+    : '<div class="empty">Toca un producto para agregarlo.<br><small>Tip: escribe y presiona Enter para agregar el primero.</small></div>';
+  box.onclick=e=>{ const b=e.target.closest('[data-a]'); if(!b) return; const it=state.cart.find(c=>c.sku===b.dataset.s), p=prod(b.dataset.s);
+    if(b.dataset.a==='+'){ if(it.cant+1>p.stock) return toast('Stock insuficiente', true); it.cant++; }
+    if(b.dataset.a==='-'){ it.cant--; if(it.cant<=0) state.cart=state.cart.filter(c=>c!==it); }
+    if(b.dataset.a==='x'){ state.cart=state.cart.filter(c=>c!==it); }
+    renderPOS(); };
+  const total=cartTotal(), base=total/1.18;
+  const cash=$('#cashBox');
+  if(state.metodo==='Efectivo'){
+    const rec=parseFloat(state.recibido)||0;
+    cash.innerHTML=`<div class="fgrid"><div class="field"><label>Recibido</label><input id="recibido" type="number" step="0.10" min="0" placeholder="0.00" value="${esc(state.recibido)}"></div><div class="field"><label>Vuelto</label><div id="vuelto" class="cond" style="font-size:24px;font-weight:800;padding-top:4px;color:${rec>=total&&total?'var(--ok)':'var(--muted)'}">${rec>=total&&total?fmt(rec-total):'—'}</div></div></div>`;
+    const ri=$('#recibido'); ri.oninput=()=>{ state.recibido=ri.value; const r=parseFloat(ri.value)||0, v=$('#vuelto'); v.textContent=r>=total&&total?fmt(r-total):'—'; v.style.color=r>=total&&total?'var(--ok)':'var(--muted)'; };
+  } else cash.innerHTML='';
+  $('#totals').innerHTML = `<div><span>Op. gravada</span><span>${fmt(base)}</span></div><div><span>IGV (18%)</span><span>${fmt(total-base)}</span></div><div class="grand"><span>Total</span><span>${fmt(total)}</span></div><button class="btn btn-primary cobrar" id="cobrar" ${state.cart.length?'':'disabled'}>Cobrar ${state.cart.length?fmt(total):''}</button>`;
+  $('#cobrar').onclick=checkout;
+}
+function checkout(){
+  const total=+cartTotal().toFixed(2), cl=client(state.clienteId);
+  if(state.comp==='F' && cl.tipo!=='RUC') return toast('Para emitir factura selecciona un cliente con RUC', true);
+  if(state.metodo==='Efectivo' && state.recibido!=='' && (parseFloat(state.recibido)||0)<total) return toast('El monto recibido es menor al total', true);
+  const serie=state.comp==='F'?'F001':'B001';
+  const num=db.sales.filter(s=>s.serie===serie).reduce((m,s)=>Math.max(m,s.num),0)+1;
+  const items=state.cart.map(c=>{ const p=prod(c.sku); p.stock-=c.cant; return {sku:p.sku,nombre:p.nombre,und:p.und,cant:c.cant,precio:p.precio}; });
+  const sale={id:'s'+Date.now(),serie,num,fecha:new Date().toISOString(),clienteId:cl.id,items,total,metodo:state.metodo,recibido:state.metodo==='Efectivo'?(parseFloat(state.recibido)||total):null};
+  db.sales.push(sale); save();
+  state.cart=[]; state.recibido=''; state.clienteId=1; state.comp='B';
+  showTicket(sale, true); render();
+}
+function ticketHTML(s){
+  const cl=client(s.clienteId), base=s.total/1.18;
+  return `<div class="ticket">
+    <div class="c"><b class="big">FERRETERÍA EL CONSTRUCTOR</b><br>Av. Ejemplo 123 · Arequipa<br>RUC 20000000001 (demo)</div><hr>
+    <div class="c"><b>${s.serie==='F001'?'FACTURA':'BOLETA DE VENTA'}</b><br>${s.serie}-${String(s.num).padStart(6,'0')}</div><hr>
+    <div>Fecha: ${fdt(s.fecha)}</div><div>Cliente: ${esc(cl.nombre)}</div>${cl.tipo!=='—'?`<div>${cl.tipo}: ${esc(cl.doc)}</div>`:''}<hr>
+    ${s.items.map(it=>`<div>${esc(it.nombre)}</div><div class="r"><span>&nbsp;&nbsp;${it.cant} ${esc(it.und)} x ${it.precio.toFixed(2)}</span><span>${(it.cant*it.precio).toFixed(2)}</span></div>`).join('')}
+    <hr><div class="r"><span>OP. GRAVADA</span><span>${base.toFixed(2)}</span></div><div class="r"><span>IGV 18%</span><span>${(s.total-base).toFixed(2)}</span></div>
+    <div class="r big"><span>TOTAL S/</span><span>${s.total.toFixed(2)}</span></div>
+    <div class="r"><span>Pago: ${esc(s.metodo)}</span>${s.recibido?`<span>Vuelto: ${(s.recibido-s.total).toFixed(2)}</span>`:''}</div><hr>
+    <div class="c">Comprobante de demostración<br>sin validez tributaria · FerroNexus</div></div>`;
+}
+function showTicket(s, isNew){
+  openModal(isNew?'✓ Venta registrada':'Comprobante', ticketHTML(s), `<button class="btn btn-light" id="cpTk">Copiar texto</button><button class="btn btn-primary" data-close>${isNew?'Nueva venta':'Cerrar'}</button>`);
+  $('#cpTk').onclick=()=>{ const t=$('.ticket').innerText; try{ navigator.clipboard.writeText(t).then(()=>toast('Comprobante copiado'),()=>toast('No se pudo copiar',true)); }catch(e){ toast('No se pudo copiar',true); } };
+}
+
+/* ----- Inventario ----- */
+function renderInv(){
+  const q=state.invQ.toLowerCase();
+  const list=db.products.filter(p=>(state.invCat==='Todas'||p.cat===state.invCat)&&(!state.invLow||p.stock<=p.min)&&(!q||p.nombre.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q)));
+  const valor=db.products.reduce((a,p)=>a+p.costo*p.stock,0);
+  $('#view').innerHTML=`
+  <div class="kpis">
+    <div class="card kpi"><small>Productos</small><div class="v">${db.products.length}</div><div class="d">${cats().length} categorías</div></div>
+    <div class="card kpi"><small>Valor del inventario</small><div class="v">${fmt0(valor)}</div><div class="d">a precio de costo</div></div>
+    <div class="card kpi alert"><small>Stock bajo</small><div class="v">${lowStock().length}</div><div class="d">requieren reposición</div></div>
+    <div class="card kpi"><small>Sin stock</small><div class="v">${db.products.filter(p=>p.stock<=0).length}</div><div class="d">productos agotados</div></div>
+  </div>
+  <div class="toolbar">
+    <div class="search">${searchIcon}<input id="invQ" placeholder="Buscar producto o código" value="${esc(state.invQ)}"></div>
+    <select class="sel" id="invCat">${['Todas',...cats()].map(c=>`<option ${state.invCat===c?'selected':''}>${esc(c)}</option>`).join('')}</select>
+    <label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="invLow" ${state.invLow?'checked':''}> Solo stock bajo</label>
+    <button class="btn btn-primary btn-sm" id="newProd">+ Nuevo producto</button>
+  </div>
+  <div class="card" style="overflow:auto"><table class="tbl"><thead><tr><th>Código</th><th>Producto</th><th class="hide-sm">Categoría</th><th class="num hide-sm">Costo</th><th class="num">Precio</th><th class="num">Stock</th><th>Estado</th><th></th></tr></thead><tbody>
+  ${list.map(p=>`<tr><td class="sku">${p.sku}</td><td><b style="font-weight:600">${esc(p.nombre)}</b><br><small style="color:var(--muted)">${esc(p.und)} · margen ${Math.round((p.precio-p.costo)/p.precio*100)}%</small></td><td class="hide-sm">${esc(p.cat)}</td><td class="num hide-sm">${fmt(p.costo)}</td><td class="num"><b>${fmt(p.precio)}</b></td><td class="num"><b>${p.stock}</b> <small style="color:var(--muted)">/ mín ${p.min}</small></td><td>${p.stock<=0?'<span class="chip bad">Agotado</span>':p.stock<=p.min?'<span class="chip warn">Reponer</span>':'<span class="chip ok">OK</span>'}</td><td style="white-space:nowrap"><button class="btn btn-light btn-sm" data-adj="${p.sku}">Ajustar</button> <button class="btn btn-light btn-sm" data-edit="${p.sku}">Editar</button></td></tr>`).join('') || '<tr><td colspan="8"><div class="empty">Sin resultados</div></td></tr>'}
+  </tbody></table></div>`;
+  const qi=$('#invQ'); qi.oninput=()=>{ state.invQ=qi.value; renderInv(); const n=$('#invQ'); n.focus(); n.setSelectionRange(n.value.length,n.value.length); };
+  $('#invCat').onchange=e=>{ state.invCat=e.target.value; renderInv(); };
+  $('#invLow').onchange=e=>{ state.invLow=e.target.checked; renderInv(); };
+  $('#newProd').onclick=()=>prodForm();
+  $('#view').querySelectorAll('[data-adj]').forEach(b=>b.onclick=()=>adjForm(b.dataset.adj));
+  $('#view').querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>prodForm(b.dataset.edit));
+}
+function adjForm(sku){
+  const p=prod(sku);
+  openModal('Ajuste de stock',`<p style="margin-bottom:14px"><b>${esc(p.nombre)}</b><br><span class="sku">${p.sku}</span> · Stock actual: <b>${p.stock} ${esc(p.und)}</b></p>
+   <div class="fgrid"><div class="field"><label>Tipo</label><select class="sel" id="adjT" style="width:100%"><option value="in">Ingreso (compra / devolución)</option><option value="out">Salida (merma / uso interno)</option></select></div>
+   <div class="field"><label>Cantidad</label><input id="adjQ" type="number" min="1" value="10"></div>
+   <div class="field full"><label>Motivo</label><input id="adjM" placeholder="Ej. Compra a proveedor, factura F001-2345"></div></div>`,
+   '<button class="btn btn-light" data-close>Cancelar</button><button class="btn btn-primary" id="adjOk">Guardar ajuste</button>');
+  $('#adjOk').onclick=()=>{ const q=parseInt($('#adjQ').value,10); if(!(q>0)) return toast('Ingresa una cantidad válida',true);
+    const out=$('#adjT').value==='out'; if(out&&q>p.stock) return toast('No puedes retirar más del stock actual',true);
+    p.stock+= out?-q:q; save(); closeModal(); render(); toast(`Stock actualizado: ${p.stock} ${p.und}`); };
+}
+function prodForm(sku){
+  const p=sku?prod(sku):{sku:'',nombre:'',cat:'Herramientas',und:'und',precio:'',costo:'',stock:'',min:5};
+  openModal(sku?'Editar producto':'Nuevo producto',`<div class="fgrid">
+    <div class="field"><label>Código</label><input id="pf-sku" value="${esc(p.sku)}" ${sku?'disabled':''} placeholder="Ej. HER-010"></div>
+    <div class="field"><label>Categoría</label><select class="sel" id="pf-cat" style="width:100%">${Object.keys(CAT_COLORS).map(c=>`<option ${p.cat===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="field full"><label>Nombre</label><input id="pf-n" value="${esc(p.nombre)}" placeholder="Ej. Nivel de burbuja 24&quot;"></div>
+    <div class="field"><label>Unidad</label><select class="sel" id="pf-u" style="width:100%">${['und','bolsa','varilla','kg','m','m³','rollo','galón','litro','caja','par','jgo'].map(u=>`<option ${p.und===u?'selected':''}>${u}</option>`).join('')}</select></div>
+    <div class="field"><label>Stock mínimo</label><input id="pf-min" type="number" min="0" value="${p.min}"></div>
+    <div class="field"><label>Costo (S/)</label><input id="pf-c" type="number" step="0.01" min="0" value="${p.costo}"></div>
+    <div class="field"><label>Precio venta con IGV (S/)</label><input id="pf-p" type="number" step="0.01" min="0" value="${p.precio}"></div>
+    ${sku?'':'<div class="field"><label>Stock inicial</label><input id="pf-s" type="number" min="0" value="0"></div>'}
+  </div>`,'<button class="btn btn-light" data-close>Cancelar</button><button class="btn btn-primary" id="pfOk">Guardar</button>');
+  $('#pfOk').onclick=()=>{
+    const v={sku:$('#pf-sku').value.trim().toUpperCase(),nombre:$('#pf-n').value.trim(),cat:$('#pf-cat').value,und:$('#pf-u').value,costo:parseFloat($('#pf-c').value),precio:parseFloat($('#pf-p').value),min:parseInt($('#pf-min').value,10)||0};
+    if(!v.nombre||!(v.precio>0)||!(v.costo>=0)) return toast('Completa nombre, costo y precio',true);
+    if(sku){ Object.assign(p,{nombre:v.nombre,cat:v.cat,und:v.und,costo:v.costo,precio:v.precio,min:v.min}); }
+    else { if(!v.sku) return toast('Ingresa un código',true); if(prod(v.sku)) return toast('Ese código ya existe',true); db.products.push({...v,stock:parseInt($('#pf-s').value,10)||0}); }
+    save(); closeModal(); render(); toast(sku?'Producto actualizado':'Producto creado');
+  };
+}
+
+/* ----- Clientes ----- */
+function renderCli(){
+  const q=state.cliQ.toLowerCase();
+  const stats={}; db.sales.forEach(s=>{ stats[s.clienteId]=stats[s.clienteId]||{n:0,t:0,last:null}; stats[s.clienteId].n++; stats[s.clienteId].t+=s.total; stats[s.clienteId].last=s.fecha; });
+  const list=db.clients.filter(c=>!q||c.nombre.toLowerCase().includes(q)||c.doc.includes(q));
+  $('#view').innerHTML=`
+  <div class="toolbar"><div class="search">${searchIcon}<input id="cliQ" placeholder="Buscar por nombre, DNI o RUC" value="${esc(state.cliQ)}"></div><button class="btn btn-primary btn-sm" id="newCli">+ Nuevo cliente</button></div>
+  <div class="card" style="overflow:auto"><table class="tbl"><thead><tr><th>Cliente</th><th>Documento</th><th class="hide-sm">Teléfono</th><th class="num">Compras</th><th class="num">Total comprado</th><th class="hide-sm">Última compra</th></tr></thead><tbody>
+  ${list.map(c=>{ const st=stats[c.id]||{n:0,t:0}; return `<tr><td><b style="font-weight:600">${esc(c.nombre)}</b></td><td>${c.tipo==='—'?'<span class="chip">Genérico</span>':`<span class="chip ${c.tipo==='RUC'?'warn':''}">${c.tipo}</span> <span class="mono">${esc(c.doc)}</span>`}</td><td class="hide-sm">${esc(c.tel||'—')}</td><td class="num">${st.n}</td><td class="num"><b>${fmt(st.t)}</b></td><td class="hide-sm">${st.last?fdt(st.last):'—'}</td></tr>`; }).join('')}
+  </tbody></table></div>`;
+  const qi=$('#cliQ'); qi.oninput=()=>{ state.cliQ=qi.value; renderCli(); const n=$('#cliQ'); n.focus(); n.setSelectionRange(n.value.length,n.value.length); };
+  $('#newCli').onclick=()=>clientForm(()=>render());
+}
+function clientForm(done){
+  openModal('Nuevo cliente',`<div class="fgrid">
+    <div class="field"><label>Tipo de documento</label><select class="sel" id="cf-t" style="width:100%"><option>DNI</option><option>RUC</option></select></div>
+    <div class="field"><label>Número</label><input id="cf-d" inputmode="numeric" placeholder="8 dígitos"></div>
+    <div class="field full"><label>Nombre o razón social</label><input id="cf-n"></div>
+    <div class="field full"><label>Teléfono</label><input id="cf-tel" placeholder="Opcional"></div></div>`,
+   '<button class="btn btn-light" data-close>Cancelar</button><button class="btn btn-primary" id="cfOk">Guardar cliente</button>');
+  $('#cf-t').onchange=e=>{ $('#cf-d').placeholder = e.target.value==='RUC'?'11 dígitos':'8 dígitos'; };
+  $('#cfOk').onclick=()=>{
+    const t=$('#cf-t').value, d=$('#cf-d').value.trim(), n=$('#cf-n').value.trim();
+    if(!/^\d+$/.test(d) || d.length!==(t==='RUC'?11:8)) return toast(t==='RUC'?'El RUC debe tener 11 dígitos':'El DNI debe tener 8 dígitos',true);
+    if(!n) return toast('Ingresa el nombre',true);
+    const c={id:db.nextClient++,tipo:t,doc:d,nombre:n,tel:$('#cf-tel').value.trim()}; db.clients.push(c); save(); closeModal(); toast('Cliente registrado'); done&&done(c);
+  };
+}
+
+/* ----- Ventas ----- */
+function renderVen(){
+  const q=state.venQ.toLowerCase();
+  const all=[...db.sales].reverse();
+  const list=all.filter(s=>!q||(s.serie+'-'+String(s.num).padStart(6,'0')).toLowerCase().includes(q)||client(s.clienteId).nombre.toLowerCase().includes(q));
+  const byM={}; db.sales.forEach(s=>byM[s.metodo]=(byM[s.metodo]||0)+s.total); const tot=db.sales.reduce((a,s)=>a+s.total,0);
+  $('#view').innerHTML=`
+  <div class="kpis">
+    ${['Efectivo','Yape/Plin','Tarjeta','Transferencia'].map(m=>`<div class="card kpi"><small>${m}</small><div class="v">${fmt0(byM[m]||0)}</div><div class="d">${tot?Math.round((byM[m]||0)/tot*100):0}% del total</div></div>`).join('')}
+  </div>
+  <div class="toolbar"><div class="search">${searchIcon}<input id="venQ" placeholder="Buscar por N.º de comprobante o cliente" value="${esc(state.venQ)}"></div><span class="chip">${db.sales.length} comprobantes · ${fmt(tot)}</span></div>
+  <div class="card" style="overflow:auto"><table class="tbl"><thead><tr><th>Comprobante</th><th>Fecha</th><th>Cliente</th><th class="num hide-sm">Ítems</th><th class="hide-sm">Pago</th><th class="num">Total</th><th></th></tr></thead><tbody>
+  ${list.slice(0,80).map(s=>`<tr><td><span class="chip ${s.serie==='F001'?'warn':''}">${s.serie==='F001'?'Factura':'Boleta'}</span> <span class="mono">${s.serie}-${String(s.num).padStart(6,'0')}</span></td><td>${fdt(s.fecha)}</td><td>${esc(client(s.clienteId).nombre)}</td><td class="num hide-sm">${s.items.reduce((a,i)=>a+i.cant,0)}</td><td class="hide-sm">${esc(s.metodo)}</td><td class="num"><b>${fmt(s.total)}</b></td><td><button class="btn btn-light btn-sm" data-tk="${s.id}">Ver</button></td></tr>`).join('') || '<tr><td colspan="7"><div class="empty">Sin resultados</div></td></tr>'}
+  </tbody></table></div>`;
+  const qi=$('#venQ'); qi.oninput=()=>{ state.venQ=qi.value; renderVen(); const n=$('#venQ'); n.focus(); n.setSelectionRange(n.value.length,n.value.length); };
+  $('#view').querySelectorAll('[data-tk]').forEach(b=>b.onclick=()=>showTicket(db.sales.find(s=>s.id===b.dataset.tk)));
+}
+
+route();
+})();
+</script>
+</body>
+</html>
